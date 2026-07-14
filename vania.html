@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Vania!!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #2b1029;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* --- HALAMAN LOGIN PIN --- */
+        #login-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #3d1b3a, #1a0819);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.8s ease;
+        }
+
+        .login-container {
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+        }
+
+        .login-title {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .login-subtitle {
+            font-size: 12px;
+            color: #bfa3bb;
+            margin-bottom: 25px;
+        }
+
+        .pin-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #ff7bbb;
+            background: transparent;
+            transition: background 0.2s;
+        }
+
+        .dot.active {
+            background: #ff7bbb;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-items: center;
+        }
+
+        .key {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.1s;
+        }
+
+        .key:active {
+            background: rgba(255, 123, 187, 0.3);
+        }
+
+        .key.action {
+            font-size: 16px;
+            background: transparent;
+            border: none;
+        }
+
+        /* --- HALAMAN ANIMASI BUKA KADO --- */
+        #gift-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #2b1029, #140513);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 998;
+            transition: opacity 0.6s ease;
+        }
+
+        .gift-instruction {
+            font-size: 16px;
+            margin-bottom: 45px;
+            color: #f0e6ef;
+            text-align: center;
+            padding: 0 20px;
+            letter-spacing: 0.5px;
+            animation: pulse 1.4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.03); opacity: 1; }
+        }
+
+        .gift-box-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            cursor: pointer;
+        }
+
+        /* Badan Kado */
+        .gift-box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #e63946;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        /* Pita Badan Kado */
+        .gift-box::before, .gift-box-lid::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            width: 24px; height: 100%;
+            background: #ffb703;
+            transform: translateX(-50%);
+        }
+        .gift-box::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 24px;
+            background: #ffb703;
+            transform: translateY(-50%);
+        }
+
+        /* Tutup Kado */
+        .gift-box-lid {
+            position: absolute;
+            top: -18px; left: -5%;
+            width: 110%; height: 32px;
+            background: #ff4d6d;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
+            transform-origin: left bottom;
+        }
+
+        /* Simpul Pita Atas */
+        .gift-bow {
+            position: absolute;
+            top: -22px; left: 50%;
+            width: 36px; height: 26px;
+            background: #ffb703;
+            border-radius: 50% 50% 0 0;
+            transform: translateX(-50%);
+        }
+        .gift-bow::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -22px;
+            width: 26px; height: 26px;
+            background: #ffb703;
+            border-radius: 50%;
+        }
+        .gift-bow::before {
+            content: '';
+            position: absolute;
+            top: 0; right: -22px;
+            width: 26px; height: 26px;
+            background: #ffb703;
+            border-radius: 50%;
+        }
+
+        /* Animasi Getar Kado */
+        .gift-box-container:not(.opened) {
+            animation: shake 0.6s infinite alternate;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(-4deg); }
+            100% { transform: rotate(4deg); }
+        }
+
+        /* Aksi Ketika Kado Dibuka */
+        .gift-box-container.opened .gift-box-lid {
+            transform: translate(-50px, -90px) rotate(-55deg);
+            opacity: 0;
+        }
+
+        /* --- KONTEN UTAMA --- */
+        #main-content {
+            display: none;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        header {
+            margin: 40px 0;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #ff7bbb;
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #ff7bbb;
+            margin: 40px 0 20px 0;
+            border-bottom: 1px solid rgba(255, 123, 187, 0.3);
+            padding-bottom: 8px;
+        }
+
+        /* Galeri Foto */
+        .photo-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .photo-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .photo-card img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .photo-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #e0cfe0;
+            font-size: 14px;
+        }
+
+        /* Surat Romantis */
+        .love-letter {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: left;
+            line-height: 1.6;
+            color: #f0e6ef;
+            font-size: 15px;
+        }
+
+        /* Musik Player */
+        .music-player {
+            background: linear-gradient(135deg, #4a1c45, #2b1029);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 123, 187, 0.2);
+        }
+
+        .track-info {
+            margin-bottom: 15px;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .track-artist {
+            font-size: 13px;
+            color: #bfa3bb;
+        }
+
+        .player-controls button {
+            background: #ff7bbb;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Pesan Footer / Penutup */
+        footer {
+            margin: 60px 0 40px 0;
+            font-size: 14px;
+            color: #bfa3bb;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AUDIO/MUSIK -->
+    <audio id="bg-music" loop>
+        <source src="Backstreet Boys - Shape Of My Heart (Official HD Video).mp3" type="audio/mpeg">
+        Browser kamu tidak mendukung pemutar musik.
+    </audio>
+
+    <!-- Halaman 1: Login PIN -->
+    <div id="login-page">
+        <div class="login-container">
+            <h2 class="login-title">Untukmu, Sayang</h2>
+            <p class="login-subtitle">Masukin tanggal jadian kita</p>
+            
+            <div class="pin-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <div class="keypad">
+                <div class="key" onclick="pressKey('1')">1</div>
+                <div class="key" onclick="pressKey('2')">2</div>
+                <div class="key" onclick="pressKey('3')">3</div>
+                <div class="key" onclick="pressKey('4')">4</div>
+                <div class="key" onclick="pressKey('5')">5</div>
+                <div class="key" onclick="pressKey('6')">6</div>
+                <div class="key" onclick="pressKey('7')">7</div>
+                <div class="key" onclick="pressKey('8')">8</div>
+                <div class="key" onclick="pressKey('9')">9</div>
+                <div class="key action" onclick="clearPin()">X</div>
+                <div class="key" onclick="pressKey('0')">0</div>
+                <div class="key action" onclick="backspace()">⌫</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman 2: Animasi Kado -->
+    <div id="gift-page">
+        <p class="gift-instruction">Ketuk kotak kado di bawah untuk membukanya! 🎁</p>
+        <div class="gift-box-container" onclick="openGift()">
+            <div class="gift-box-lid">
+                <div class="gift-bow"></div>
+            </div>
+            <div class="gift-box"></div>
+        </div>
+    </div>
+
+    <!-- Halaman 3: Konten Utama setelah PIN Benar -->
+    <div id="main-content">
+        <header>
+            <h1>Selamat Hari Spesial!</h1>
+            <p>Hari yang paling berharga dalam hidupku ✨</p>
+        </header>
+
+        <!-- Bagian Pemutar Musik -->
+        <div class="music-player">
+            <div class="track-info">
+                <div class="track-title">Shape of My Heart</div>
+                <div class="track-artist">Backstreet Boys</div>
+            </div>
+            <div class="player-controls">
+                <button id="play-btn" onclick="toggleMusic()">PAUSE</button>
+            </div>
+        </div>
+
+        <!-- Bagian Surat -->
+        <h3 class="section-title">Surat Untuk perempuan special</h3>
+        <div class="love-letter">
+            <p>Halo Sayang,<br><br>
+            ini adalah hari yang sangat spesial untuk kamu,semoga ditahun ini semua keinginan kamu dapat terkabulkan pelan pelan,semoga menjadi tahun berbahagia untuk kamu ya sayang!aku berharap kamu bisa bahagia di tahun ini sampai selamanya ya,sayangg?jangan ovt terus yaa sayang,kalau ada masalah/sedang kesusahan ceritaa sama akuu,akuu bakall bantu kamu dan arahinn kamu.aku gaakan biarin cewe ak kesusahan.ak yakin kamu cinta terakhir ak,kita bareng bareng terus ya sampai dewasa?i lovee uu so muchh Vania Amada Elysayha sayanggg.<br><br>
+            <br><br>
+            <i>sayang sama ak terus yh.<br>Aku sangat mencintaimu.</i></p>
+        </div>
+
+        <!-- Bagian Kenangan Foto -->
+        <h3 class="section-title">pretty girl</h3>
+        <div class="photo-gallery"
+            <div class="photo-card">
+                <img src="pertama.jpeg" alt="foto pertama kamu kirim ke aku">
+                <div class="photo-caption">foto yang pertama kali kamu kirim ke aku 💕</div>
+            </div>
+            <div class="photo-card">
+                <img src="jalan.jpeg" alt="foto saat kita jalan">
+                <div class="photo-caption">foto saat kita pertama kali jalan 🥰</div>
+                <div class="photo-card">
+                <img src="bonus.jpeg" alt="foto bonus">
+                <div class="photo-caption">WKWKWKWKWKWKKWKWKW</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Dibuat dengan penuh kesabaran ❤️</p>
+        </footer>
+    </div>
+
+    <script>
+        const CORRECT_PIN = "0106"; 
+        let currentPin = "";
+
+        const dots = document.querySelectorAll('.dot');
+        const audio = document.getElementById('bg-music');
+        const playBtn = document.getElementById('play-btn');
+
+        function pressKey(num) {
+            if (currentPin.length < 4) {
+                currentPin += num;
+                updateDots();
+                
+                if (currentPin.length === 4) {
+                    setTimeout(checkPin, 200);
+                }
+            }
+        }
+
+        function clearPin() {
+            currentPin = "";
+            updateDots();
+        }
+
+        function backspace() {
+            currentPin = currentPin.slice(0, -1);
+            updateDots();
+        }
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function checkPin() {
+            if (currentPin === CORRECT_PIN) {
+                // Musik langsung diputar berkat interaksi klik tombol terakhir
+                playMusic();
+
+                const loginPage = document.getElementById('login-page');
+                loginPage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                    // Munculkan halaman animasi kado
+                    const giftPage = document.getElementById('gift-page');
+                    giftPage.style.display = 'flex';
+                }, 800);
+            } else {
+                alert("PIN salah, coba ingat-ingat lagi ya! V(^_^) ");
+                clearPin();
+            }
+        }
+
+        // Fungsi membuka kado
+        function openGift() {
+            const container = document.querySelector('.gift-box-container');
+            container.classList.add('opened'); // Memicu animasi CSS
+
+            setTimeout(() => {
+                const giftPage = document.getElementById('gift-page');
+                giftPage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    giftPage.style.display = 'none';
+                    // Tampilkan surat dan foto utama
+                    document.getElementById('main-content').style.display = 'block';
+                }, 600);
+            }, 1000); // Jeda agar efek tutup kado terlempar selesai terlihat
+        }
+
+        function playMusic() {
+            audio.play().catch(error => {
+                console.log("Pemutaran musik diblokir browser: ", error);
+            });
+        }
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = "PAUSE";
+            } else {
+                audio.pause();
+                playBtn.innerText = "PLAY";
+            }
+        }
+    </script>
+</body>
+</html>
